@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30717.126
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APIDaemonClient", "APIDaemonClient\APIDaemonClient.csproj", "{1C1BA3EF-C22E-416D-A345-026E770B2DC3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APIDaemonClient_Tests", "..\..\test\APIDaemonClient_Tests\APIDaemonClient_Tests.csproj", "{E7369D28-C251-4645-8741-F6F0969DE6BF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1C1BA3EF-C22E-416D-A345-026E770B2DC3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C1BA3EF-C22E-416D-A345-026E770B2DC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C1BA3EF-C22E-416D-A345-026E770B2DC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C1BA3EF-C22E-416D-A345-026E770B2DC3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E7369D28-C251-4645-8741-F6F0969DE6BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7369D28-C251-4645-8741-F6F0969DE6BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7369D28-C251-4645-8741-F6F0969DE6BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E7369D28-C251-4645-8741-F6F0969DE6BF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6C20AEED-13D1-48CD-9A58-C8DCCCD4A959}
+	EndGlobalSection
+EndGlobal
