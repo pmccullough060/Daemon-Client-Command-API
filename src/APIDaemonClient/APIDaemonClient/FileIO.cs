@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -8,7 +9,24 @@ namespace APIDaemonClient
     public static class FileIO
     {
         private const string folderName = "APIDaemonClient";
+
+        private const string logName = "programLog.txt";
+        public static string LogFilePath
+        {
+            get
+            {
+                return Path.Combine(AppLocalDirectory, folderName, logName); 
+            }
+        }
+
         private const string fileName = "Settings.json";
+        public static string FileName
+        {
+            get
+            {
+                return fileName;
+            }
+        }
 
         public static string AppLocalDirectory
         {
@@ -30,14 +48,12 @@ namespace APIDaemonClient
         {
             get
             {
-                return Path.Combine(AppLocalDirectory, folderName, fileName);
+                return Path.Combine(AppLocalDirectory, folderName, FileName);
             }
         }
 
-        public static bool CheckForExistingSettingsFile ()
+        public static void CheckForExistingSettingsFile ()
         {
-            var fileAlreadyExists = true;
-
             if (Directory.Exists(FolderPath) == false)
             {
                 Directory.CreateDirectory(FolderPath);
@@ -45,11 +61,15 @@ namespace APIDaemonClient
 
             if(File.Exists(FilePath) == false)
             {
-                File.Create(FilePath);
-                fileAlreadyExists = false;
-            }
+                var settings = new Settings()
+                {
+                    LogOutputDirectory = LogFilePath,
+                    SettingsDirectory = FilePath
+                };
 
-            return fileAlreadyExists;
+                string settingsString = JsonConvert.SerializeObject(settings, Formatting.Indented);
+                File.WriteAllText(FilePath, settingsString); //creating a new settings file in this directory if it doesn't exist.
+            }
         }
     }
 }

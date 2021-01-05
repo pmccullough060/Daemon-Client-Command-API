@@ -24,3 +24,8 @@ C:\Users\pmccu\source\repos\APIDaemonClient\src\APIDaemonClient\APIDaemonClient\
 C:\Users\pmccu\source\repos\APIDaemonClient\src\APIDaemonClient\APIDaemonClient\obj\Debug\netcoreapp3.1\APIDaemonClient.dll
 C:\Users\pmccu\source\repos\APIDaemonClient\src\APIDaemonClient\APIDaemonClient\obj\Debug\netcoreapp3.1\APIDaemonClient.pdb
 C:\Users\pmccu\source\repos\APIDaemonClient\src\APIDaemonClient\APIDaemonClient\obj\Debug\netcoreapp3.1\APIDaemonClient.genruntimeconfig.cache
+C:\Users\pmccu\source\repos\APIDaemonClient\src\APIDaemonClient\APIDaemonClient\bin\Debug\netcoreapp3.1\Microsoft.Extensions.DependencyInjection.dll
+C:\Users\pmccu\source\repos\APIDaemonClient\src\APIDaemonClient\APIDaemonClient\bin\Debug\netcoreapp3.1\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+C:\Users\pmccu\source\repos\APIDaemonClient\src\APIDaemonClient\APIDaemonClient\bin\Debug\netcoreapp3.1\Newtonsoft.Json.dll
+C:\Users\pmccu\source\repos\APIDaemonClient\src\APIDaemonClient\APIDaemonClient\bin\Debug\netcoreapp3.1\Serilog.dll
+C:\Users\pmccu\source\repos\APIDaemonClient\src\APIDaemonClient\APIDaemonClient\bin\Debug\netcoreapp3.1\Serilog.Sinks.File.dll
