@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
-using Serilog;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,23 +9,17 @@ namespace APIDaemonClient
     public class App
     {
         private readonly IConfiguration _config;
+        private readonly ILogger<App> _logger = null;
 
-        public App(IConfiguration config)
+        public App(IConfiguration config, ILogger<App> logger)
         {
             _config = config;
+            _logger = logger;
         }
 
         public void Run()
         {
-            var settings = new Settings();
-            var logDirectory = _config.GetValue<string>(nameof(settings.LogOutputDirectory));
-
-            var log = new LoggerConfiguration()
-                .WriteTo.File(logDirectory)
-                .CreateLogger();
-
-            log.Information("Application Started");
-
+            _logger.LogInformation("hey");
         }
     }
 }

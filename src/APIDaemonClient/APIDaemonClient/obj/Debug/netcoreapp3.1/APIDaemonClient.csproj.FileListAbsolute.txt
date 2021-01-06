@@ -29,3 +29,16 @@ C:\Users\pmccu\source\repos\APIDaemonClient\src\APIDaemonClient\APIDaemonClient\
 C:\Users\pmccu\source\repos\APIDaemonClient\src\APIDaemonClient\APIDaemonClient\bin\Debug\netcoreapp3.1\Newtonsoft.Json.dll
 C:\Users\pmccu\source\repos\APIDaemonClient\src\APIDaemonClient\APIDaemonClient\bin\Debug\netcoreapp3.1\Serilog.dll
 C:\Users\pmccu\source\repos\APIDaemonClient\src\APIDaemonClient\APIDaemonClient\bin\Debug\netcoreapp3.1\Serilog.Sinks.File.dll
+C:\Users\pmccu\source\repos\APIDaemonClient\src\APIDaemonClient\APIDaemonClient\bin\Debug\netcoreapp3.1\Microsoft.DotNet.PlatformAbstractions.dll
+C:\Users\pmccu\source\repos\APIDaemonClient\src\APIDaemonClient\APIDaemonClient\bin\Debug\netcoreapp3.1\Microsoft.Extensions.DependencyModel.dll
+C:\Users\pmccu\source\repos\APIDaemonClient\src\APIDaemonClient\APIDaemonClient\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Logging.dll
+C:\Users\pmccu\source\repos\APIDaemonClient\src\APIDaemonClient\APIDaemonClient\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Logging.Abstractions.dll
+C:\Users\pmccu\source\repos\APIDaemonClient\src\APIDaemonClient\APIDaemonClient\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Options.dll
+C:\Users\pmccu\source\repos\APIDaemonClient\src\APIDaemonClient\APIDaemonClient\bin\Debug\netcoreapp3.1\Serilog.AspNetCore.dll
+C:\Users\pmccu\source\repos\APIDaemonClient\src\APIDaemonClient\APIDaemonClient\bin\Debug\netcoreapp3.1\Serilog.Extensions.Hosting.dll
+C:\Users\pmccu\source\repos\APIDaemonClient\src\APIDaemonClient\APIDaemonClient\bin\Debug\netcoreapp3.1\Serilog.Extensions.Logging.dll
+C:\Users\pmccu\source\repos\APIDaemonClient\src\APIDaemonClient\APIDaemonClient\bin\Debug\netcoreapp3.1\Serilog.Formatting.Compact.dll
+C:\Users\pmccu\source\repos\APIDaemonClient\src\APIDaemonClient\APIDaemonClient\bin\Debug\netcoreapp3.1\Serilog.Settings.Configuration.dll
+C:\Users\pmccu\source\repos\APIDaemonClient\src\APIDaemonClient\APIDaemonClient\bin\Debug\netcoreapp3.1\Serilog.Sinks.Console.dll
+C:\Users\pmccu\source\repos\APIDaemonClient\src\APIDaemonClient\APIDaemonClient\bin\Debug\netcoreapp3.1\Serilog.Sinks.Debug.dll
+C:\Users\pmccu\source\repos\APIDaemonClient\src\APIDaemonClient\APIDaemonClient\bin\Debug\netcoreapp3.1\System.Diagnostics.DiagnosticSource.dll

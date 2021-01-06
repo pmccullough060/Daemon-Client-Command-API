@@ -10,25 +10,32 @@ namespace APIDaemonClient
     {
         static void Main(string[] args)
         {
-            var services = ConfigureServices();
+            IServiceCollection servicesCollection = new ServiceCollection();
+            var services = ConfigureServices(servicesCollection);
+
             var serviceProvider = services.BuildServiceProvider();
 
             //calls the Run method in App, which replaces main...
             serviceProvider.GetService<App>().Run();
-
         }
 
-        private static IServiceCollection ConfigureServices()
+        private static IServiceCollection ConfigureServices(IServiceCollection services)
         {
-            IServiceCollection services = new ServiceCollection();
-
-            var config = LoadConfiguration();
-
-            var log = new LoggerConfiguration()
-                .WriteTo.File("LogOutputDirectory")
+            var serilogLogger = new LoggerConfiguration()
+                .WriteTo.File(FileIO.LogFilePath)
                 .CreateLogger();
 
+            //loading configuration file
+            var config = LoadConfiguration();
+
+            //adding serilog
+            services.AddLogging(Builder =>
+            {
+                Builder.AddSerilog(logger: serilogLogger, dispose: true);
+            });
+
             services.AddSingleton(config);
+            services.AddSingleton(Log.Logger);
 
             //registering App.cs
             services.AddTransient<App>();
