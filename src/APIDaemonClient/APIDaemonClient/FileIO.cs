@@ -11,6 +11,7 @@ namespace APIDaemonClient
         private const string folderName = "APIDaemonClient";
 
         private const string logName = "programLog.txt";
+
         public static string LogFilePath
         {
             get
