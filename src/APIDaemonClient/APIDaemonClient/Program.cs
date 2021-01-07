@@ -34,11 +34,12 @@ namespace APIDaemonClient
                 Builder.AddSerilog(logger: serilogLogger, dispose: true);
             });
 
+            //singleton as: -> object is the same for everyobject and every request..
             services.AddSingleton(config);
-            services.AddSingleton(Log.Logger);
 
             //registering App.cs
             services.AddTransient<App>();
+            services.AddTransient<IClientAppBuilderWrapper,ClientAppBuilderWrapper>();
 
             return services;
         }
