@@ -30,7 +30,7 @@ namespace APIDaemonClient
             bool sucessfulCompletion = RunAsync().GetAwaiter().GetResult();
         }
 
-        private async Task<bool> RunAsync()
+        public async Task<bool> RunAsync()
         {
             AuthenticationResult result = null;
 
