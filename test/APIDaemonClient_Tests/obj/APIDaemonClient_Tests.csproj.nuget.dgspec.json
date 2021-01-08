@@ -4,14 +4,14 @@
     "C:\\Users\\pmccu\\source\\repos\\APIDaemonClient\\test\\APIDaemonClient_Tests\\APIDaemonClient_Tests.csproj": {}
   },
   "projects": {
-    "C:\\Users\\pmccu\\source\\repos\\APIDaemonClient\\test\\APIDaemonClient_Tests\\APIDaemonClient_Tests.csproj": {
+    "C:\\Users\\pmccu\\source\\repos\\APIDaemonClient\\src\\APIDaemonClient\\APIDaemonClient\\APIDaemonClient.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\pmccu\\source\\repos\\APIDaemonClient\\test\\APIDaemonClient_Tests\\APIDaemonClient_Tests.csproj",
-        "projectName": "APIDaemonClient_Tests",
-        "projectPath": "C:\\Users\\pmccu\\source\\repos\\APIDaemonClient\\test\\APIDaemonClient_Tests\\APIDaemonClient_Tests.csproj",
+        "projectUniqueName": "C:\\Users\\pmccu\\source\\repos\\APIDaemonClient\\src\\APIDaemonClient\\APIDaemonClient\\APIDaemonClient.csproj",
+        "projectName": "APIDaemonClient",
+        "projectPath": "C:\\Users\\pmccu\\source\\repos\\APIDaemonClient\\src\\APIDaemonClient\\APIDaemonClient\\APIDaemonClient.csproj",
         "packagesPath": "C:\\Users\\pmccu\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\pmccu\\source\\repos\\APIDaemonClient\\test\\APIDaemonClient_Tests\\obj\\",
+        "outputPath": "C:\\Users\\pmccu\\source\\repos\\APIDaemonClient\\src\\APIDaemonClient\\APIDaemonClient\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\pmccu\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -56,6 +56,117 @@
               "target": "Package",
               "version": "[5.0.0, )"
             },
+            "Microsoft.Extensions.DependencyInjection": {
+              "target": "Package",
+              "version": "[5.0.1, )"
+            },
+            "Microsoft.Extensions.DependencyInjection.Abstractions": {
+              "target": "Package",
+              "version": "[5.0.0, )"
+            },
+            "Microsoft.Extensions.Logging": {
+              "target": "Package",
+              "version": "[5.0.0, )"
+            },
+            "Microsoft.Identity.Client": {
+              "target": "Package",
+              "version": "[4.24.0, )"
+            },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[12.0.3, )"
+            },
+            "Serilog.AspNetCore": {
+              "target": "Package",
+              "version": "[3.4.0, )"
+            },
+            "Serilog.Sinks.File": {
+              "target": "Package",
+              "version": "[4.1.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.100\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\pmccu\\source\\repos\\APIDaemonClient\\test\\APIDaemonClient_Tests\\APIDaemonClient_Tests.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\pmccu\\source\\repos\\APIDaemonClient\\test\\APIDaemonClient_Tests\\APIDaemonClient_Tests.csproj",
+        "projectName": "APIDaemonClient_Tests",
+        "projectPath": "C:\\Users\\pmccu\\source\\repos\\APIDaemonClient\\test\\APIDaemonClient_Tests\\APIDaemonClient_Tests.csproj",
+        "packagesPath": "C:\\Users\\pmccu\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\pmccu\\source\\repos\\APIDaemonClient\\test\\APIDaemonClient_Tests\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\pmccu\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "netcoreapp3.1"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netcoreapp3.1": {
+            "targetAlias": "netcoreapp3.1",
+            "projectReferences": {
+              "C:\\Users\\pmccu\\source\\repos\\APIDaemonClient\\src\\APIDaemonClient\\APIDaemonClient\\APIDaemonClient.csproj": {
+                "projectPath": "C:\\Users\\pmccu\\source\\repos\\APIDaemonClient\\src\\APIDaemonClient\\APIDaemonClient\\APIDaemonClient.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "netcoreapp3.1": {
+          "targetAlias": "netcoreapp3.1",
+          "dependencies": {
+            "Microsoft.Extensions.Configuration": {
+              "target": "Package",
+              "version": "[5.0.0, )"
+            },
+            "Microsoft.Extensions.Configuration.Binder": {
+              "target": "Package",
+              "version": "[5.0.0, )"
+            },
+            "Microsoft.Extensions.Configuration.Json": {
+              "target": "Package",
+              "version": "[5.0.0, )"
+            },
+            "Microsoft.Extensions.Configuration.UserSecrets": {
+              "target": "Package",
+              "version": "[5.0.0, )"
+            },
+            "Microsoft.Extensions.Logging.Abstractions": {
+              "target": "Package",
+              "version": "[5.0.0, )"
+            },
             "Microsoft.Identity.Client": {
               "target": "Package",
               "version": "[4.24.0, )"
@@ -63,6 +174,10 @@
             "Microsoft.NET.Test.Sdk": {
               "target": "Package",
               "version": "[16.7.1, )"
+            },
+            "Moq": {
+              "target": "Package",
+              "version": "[4.15.2, )"
             },
             "Newtonsoft.Json": {
               "target": "Package",
@@ -96,6 +211,9 @@
           "assetTargetFallback": true,
           "warn": true,
           "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
