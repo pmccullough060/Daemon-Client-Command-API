@@ -14,9 +14,13 @@ namespace APIDaemonClient
         private readonly IConfiguration _config;
         private readonly ILogger<App> _logger;
         private readonly IClientAppBuilderWrapper _clientAppBuilderWrapper;
+        private readonly IDaemonHttpClient _daemonHttpClient;
 
-        public App(IConfiguration config, ILogger<App> logger, IClientAppBuilderWrapper clientAppBuilderWrapper)
+        private string AccessToken;
+
+        public App(IConfiguration config, ILogger<App> logger, IClientAppBuilderWrapper clientAppBuilderWrapper, IDaemonHttpClient daemonHttpClient)
         {
+            _daemonHttpClient = daemonHttpClient;
             _config = config;
             _logger = logger;
             _clientAppBuilderWrapper = clientAppBuilderWrapper;
@@ -27,10 +31,12 @@ namespace APIDaemonClient
             _logger.LogInformation("Calling Azure AAD");
             Console.WriteLine("Making the call...");
 
-            bool sucessfulCompletion = RunAsync().GetAwaiter().GetResult();
+            bool sucessfulAuth = GetAuthResult().GetAwaiter().GetResult(); //attempts to successfully authenticate using Azure AAD
+
+            bool successfulHttp = MakeHttpRequests().GetAwaiter().GetResult();
         }
 
-        public async Task<bool> RunAsync()
+        public async Task<bool> GetAuthResult()
         {
             AuthenticationResult result = null;
 
@@ -45,30 +51,24 @@ namespace APIDaemonClient
             }
             else
             {
+                //storing the AccessToken....
+                AccessToken = result.AccessToken;
+
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("Token acquired \n");
                 Console.WriteLine(result.AccessToken);
                 Console.ResetColor();
-                
             }
 
-            if (!string.IsNullOrEmpty(result.AccessToken))
-            {
-                var httpClient = new HttpClient();
-                var defaultRequestHeaders = httpClient.DefaultRequestHeaders;
+            return true;
+        }
 
-                //setting the appropriate media type in the request headers
+        public async Task<bool> MakeHttpRequests()
+        {
+            _daemonHttpClient.ConfigureRequestHeaders(AccessToken);
 
-                if(defaultRequestHeaders.Accept == null || !defaultRequestHeaders.Accept.Any(x => x.MediaType == "application/json"))
-                {
-                    httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                }
+            var returnbool = await _daemonHttpClient.HttpGetAsync(_config["BaseAddress"]);
 
-                defaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", result.AccessToken);
-
-                HttpResponseMessage response = await httpClient.GetAsync(_config["BaseAddress"]);
-
-            }
             return true;
         }
     }

@@ -19,7 +19,6 @@ namespace APIDaemonClient_Tests
         public static ILoggerFactory mockLoggerFactory { get; set; }
         public static ILogger<App> mockLogger { get; set; }
 
-
         public AppTests()
         {
             mockLoggerFactory = new NullLoggerFactory();
@@ -31,12 +30,14 @@ namespace APIDaemonClient_Tests
         {
             var mockConfig = new Mock<IConfiguration>();
 
+            var mockDaemonHttpClient = new Mock<IDaemonHttpClient>();
+
             var mockClientAppBuilderWrapper = new Mock<IClientAppBuilderWrapper>();
             mockClientAppBuilderWrapper.Setup(x => x.GetAuthenticationResult()).Returns(Task.FromResult<AuthenticationResult>(null));
 
-            var app = new App(mockConfig.Object, mockLogger, mockClientAppBuilderWrapper.Object);
+            var app = new App(mockConfig.Object, mockLogger, mockClientAppBuilderWrapper.Object, mockDaemonHttpClient.Object);
 
-            var result = await app.RunAsync();
+            var result = await app.GetAuthResult();
 
             Assert.False(result);
         }
@@ -46,12 +47,14 @@ namespace APIDaemonClient_Tests
         {
             var mockConfig = new Mock<IConfiguration>();
 
+            var mockDaemonHttpClient = new Mock<IDaemonHttpClient>();
+
             var mockClientAppBuilderWrapper = new Mock<IClientAppBuilderWrapper>();
             mockClientAppBuilderWrapper.Setup(x => x.GetAuthenticationResult()).Returns(Task.FromResult<AuthenticationResult>(null));
 
-            var app = new App(mockConfig.Object, mockLogger, mockClientAppBuilderWrapper.Object);
+            var app = new App(mockConfig.Object, mockLogger, mockClientAppBuilderWrapper.Object, mockDaemonHttpClient.Object);
 
-            var result = await app.RunAsync();
+            var result = await app.GetAuthResult();
 
             Assert.False(result);
         }

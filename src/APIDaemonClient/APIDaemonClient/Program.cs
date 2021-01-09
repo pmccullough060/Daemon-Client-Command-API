@@ -40,6 +40,7 @@ namespace APIDaemonClient
             //registering App.cs
             services.AddTransient<App>();
             services.AddTransient<IClientAppBuilderWrapper,ClientAppBuilderWrapper>();
+            services.AddTransient<IDaemonHttpClient, DaemonHttpClient>();
 
             return services;
         }

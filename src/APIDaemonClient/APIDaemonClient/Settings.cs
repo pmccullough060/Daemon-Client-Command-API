@@ -28,5 +28,9 @@ namespace APIDaemonClient
         {
             //parameterless constructor
         }
+
+        //the settings will be updated to contain arrays of the various end points then the daemon client can rattle through all of them..
+
+        //also pick which client you want to post etc....
     }
 }
