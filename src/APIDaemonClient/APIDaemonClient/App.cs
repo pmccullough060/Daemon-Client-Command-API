@@ -28,6 +28,10 @@ namespace APIDaemonClient
 
         public void Run()
         {
+            //we need a class that allows us to update all the various settings on startup
+
+            //then we need a class to allow us to interact with the various API end points, post data etc...
+
             _logger.LogInformation("Calling Azure AAD");
             Console.WriteLine("Making the call...");
 
@@ -66,9 +70,7 @@ namespace APIDaemonClient
         public async Task<bool> MakeHttpRequests()
         {
             _daemonHttpClient.ConfigureRequestHeaders(AccessToken);
-
             var returnbool = await _daemonHttpClient.HttpGetAsync(_config["BaseAddress"]);
-
             return true;
         }
     }

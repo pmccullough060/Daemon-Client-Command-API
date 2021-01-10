@@ -1,6 +1,8 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Text;
 
@@ -62,15 +64,31 @@ namespace APIDaemonClient
 
             if(File.Exists(FilePath) == false)
             {
-                var settings = new Settings()
-                {
-                    LogOutputDirectory = LogFilePath,
-                    SettingsDirectory = FilePath
-                };
-
-                string settingsString = JsonConvert.SerializeObject(settings, Formatting.Indented);
-                File.WriteAllText(FilePath, settingsString); //creating a new settings file in this directory if it doesn't exist.
+                File.WriteAllText(FilePath, CreateNewSettingsFile());
             }
         }
+
+        public static string CreateNewSettingsFile() //creating a new JObject of settings parameters if the file doesn't already exist....
+        {
+            var instance = "https://login.microsoftonline.com/{0}";
+            var tenantId = "f50df192-055e-42c9-81eb-37bf51d5bbb6";
+
+            dynamic jsonObject = new JObject();
+
+            jsonObject.Instance = instance;
+            jsonObject.TenantId = tenantId;
+            jsonObject.ClientId = "993ad1fd-2b76-47a7-a584-52bb6cb262d6";
+            jsonObject.Authority = String.Format(CultureInfo.InvariantCulture, instance, tenantId);
+            jsonObject.ClientSecret = "IFq.56Dz_bE~~VrqRhGgqm0b8g9Gd35A~e";
+            jsonObject.BaseAddress = "https://localhost:5001/api/Commands/1";
+            jsonObject.ResourceId = "api://c0a043f6-4915-4267-8cff-08265fef5a64/.default";
+            jsonObject.LogOutputDirectory = LogFilePath;
+            jsonObject.SettingsDirectory = FilePath;
+
+            //jsonObject.list = JToken.FromObject(myList)
+
+            return JsonConvert.SerializeObject(jsonObject, Formatting.Indented);
+        }
+
     }
 }

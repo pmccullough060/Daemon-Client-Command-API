@@ -1,8 +1,10 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using System;
+using System.IO;
 
 namespace APIDaemonClient
 {
@@ -25,7 +27,7 @@ namespace APIDaemonClient
                 .WriteTo.File(FileIO.LogFilePath)
                 .CreateLogger();
 
-            //loading configuration file
+            //loading configuration filek
             var config = LoadConfiguration();
 
             //adding serilog
@@ -34,8 +36,12 @@ namespace APIDaemonClient
                 Builder.AddSerilog(logger: serilogLogger, dispose: true);
             });
 
+            //isntantiating a physical file provider.. wraps the System.IO.File type and provides access to the physical file system.
+            IFileProvider physicalProvider = new PhysicalFileProvider(FileIO.FolderPath);
+
             //singleton as: -> object is the same for everyobject and every request..
             services.AddSingleton(config);
+            services.AddSingleton<IFileProvider>(physicalProvider);
 
             //registering App.cs
             services.AddTransient<App>();
@@ -51,7 +57,7 @@ namespace APIDaemonClient
 
             var builder = new ConfigurationBuilder()
                 .SetBasePath(FileIO.FolderPath)
-                .AddJsonFile(FileIO.FileName)
+                .AddJsonFile(FileIO.FileName, optional: false, reloadOnChange: true)
                 .Build();
 
             return builder;
