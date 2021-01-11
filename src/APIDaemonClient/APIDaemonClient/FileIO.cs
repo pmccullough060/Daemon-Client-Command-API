@@ -11,23 +11,15 @@ namespace APIDaemonClient
     public static class FileIO
     {
         private const string folderName = "APIDaemonClient";
-
         private const string logName = "programLog.txt";
+
+        public static string FileName { get; } = "Settings.json";
 
         public static string LogFilePath
         {
             get
             {
                 return Path.Combine(AppLocalDirectory, folderName, logName); 
-            }
-        }
-
-        private const string fileName = "Settings.json";
-        public static string FileName
-        {
-            get
-            {
-                return fileName;
             }
         }
 
@@ -55,7 +47,7 @@ namespace APIDaemonClient
             }
         }
 
-        public static void CheckForExistingSettingsFile ()
+        public static void CheckForExistingSettingsFile() //not using the IFileProvider as the FileIO static class is used before the IOC container is configured.
         {
             if (Directory.Exists(FolderPath) == false)
             {

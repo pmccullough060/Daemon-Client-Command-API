@@ -42,11 +42,13 @@ namespace APIDaemonClient
             //singleton as: -> object is the same for everyobject and every request..
             services.AddSingleton(config);
             services.AddSingleton<IFileProvider>(physicalProvider);
+            services.AddSingleton<IUpdateSetting, UpdateSetting>();
 
             //registering App.cs
             services.AddTransient<App>();
             services.AddTransient<IClientAppBuilderWrapper,ClientAppBuilderWrapper>();
             services.AddTransient<IDaemonHttpClient, DaemonHttpClient>();
+            services.AddTransient<IUpdateSettingDialogue, UpdateSettingDialogue>();
 
             return services;
         }

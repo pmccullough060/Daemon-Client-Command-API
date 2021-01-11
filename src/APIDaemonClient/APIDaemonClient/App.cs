@@ -15,24 +15,25 @@ namespace APIDaemonClient
         private readonly ILogger<App> _logger;
         private readonly IClientAppBuilderWrapper _clientAppBuilderWrapper;
         private readonly IDaemonHttpClient _daemonHttpClient;
+        private readonly IUpdateSettingDialogue _updateSettingDialogue;
 
         private string AccessToken;
 
-        public App(IConfiguration config, ILogger<App> logger, IClientAppBuilderWrapper clientAppBuilderWrapper, IDaemonHttpClient daemonHttpClient)
+        public App(IConfiguration config, ILogger<App> logger, IClientAppBuilderWrapper clientAppBuilderWrapper, IDaemonHttpClient daemonHttpClient, IUpdateSettingDialogue updateSettingDialogue )
         {
             _daemonHttpClient = daemonHttpClient;
             _config = config;
             _logger = logger;
             _clientAppBuilderWrapper = clientAppBuilderWrapper;
+            _updateSettingDialogue = updateSettingDialogue;
         }
 
         public void Run()
         {
-            //we need a class that allows us to update all the various settings on startup
-
-            //then we need a class to allow us to interact with the various API end points, post data etc...
+            _updateSettingDialogue.RunDialogue();
 
             _logger.LogInformation("Calling Azure AAD");
+
             Console.WriteLine("Making the call...");
 
             bool sucessfulAuth = GetAuthResult().GetAwaiter().GetResult(); //attempts to successfully authenticate using Azure AAD
