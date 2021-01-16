@@ -6,6 +6,8 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Linq;
 using System.Net.Http.Headers;
+using Microsoft.Extensions.DependencyInjection;
+using APIDaemonClient.Attributes;
 
 namespace APIDaemonClient
 {
@@ -15,22 +17,37 @@ namespace APIDaemonClient
         private readonly ILogger<App> _logger;
         private readonly IClientAppBuilderWrapper _clientAppBuilderWrapper;
         private readonly IDaemonHttpClient _daemonHttpClient;
-        private readonly IUpdateSettingDialogue _updateSettingDialogue;
+        private readonly ICommandParser _updateSettingDialogue;
+        private readonly IServiceProvider _serviceProvider;
+        private readonly IUpdateSetting _updateSetting;
+        private readonly ICommandParser _commandParser;
 
         private string AccessToken;
 
-        public App(IConfiguration config, ILogger<App> logger, IClientAppBuilderWrapper clientAppBuilderWrapper, IDaemonHttpClient daemonHttpClient, IUpdateSettingDialogue updateSettingDialogue )
+        public App(ICommandParser commandParser, IUpdateSetting updateSetting, IServiceProvider serviceProvider, IConfiguration config, ILogger<App> logger, IClientAppBuilderWrapper clientAppBuilderWrapper, IDaemonHttpClient daemonHttpClient, ICommandParser updateSettingDialogue )
         {
             _daemonHttpClient = daemonHttpClient;
             _config = config;
             _logger = logger;
             _clientAppBuilderWrapper = clientAppBuilderWrapper;
             _updateSettingDialogue = updateSettingDialogue;
+
+            _commandParser = commandParser;
+
+            //getting an instance of the IServiceProvider
+            _serviceProvider = serviceProvider;
+            _updateSetting = updateSetting;
         }
 
         public void Run()
         {
-            _updateSettingDialogue.RunDialogue();
+            //testing the new command parser logic
+
+            _commandParser.CallMethod("Test this Method");
+
+            _commandParser.Parse();
+
+            //finished testing the new command parser logic 
 
             _logger.LogInformation("Calling Azure AAD");
 

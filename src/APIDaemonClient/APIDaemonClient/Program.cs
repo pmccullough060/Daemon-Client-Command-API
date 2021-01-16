@@ -44,11 +44,10 @@ namespace APIDaemonClient
             services.AddSingleton<IFileProvider>(physicalProvider);
             services.AddSingleton<IUpdateSetting, UpdateSetting>();
 
-            //registering App.cs
             services.AddTransient<App>();
             services.AddTransient<IClientAppBuilderWrapper,ClientAppBuilderWrapper>();
             services.AddTransient<IDaemonHttpClient, DaemonHttpClient>();
-            services.AddTransient<IUpdateSettingDialogue, UpdateSettingDialogue>();
+            services.AddSingleton<ICommandParser, CommandParser>();
 
             return services;
         }

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using APIDaemonClient.Attributes;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -72,6 +73,11 @@ namespace APIDaemonClient
             {
                 streamWriter.Write(JsonConvert.SerializeObject(Settings, Formatting.Indented));
             }
+        }
+
+        public void Test()
+        {
+            Console.WriteLine("hey");
         }
 
     }
