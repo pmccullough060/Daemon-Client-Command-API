@@ -75,7 +75,7 @@ namespace APIDaemonClient
             }
         }
 
-        public void Test()
+        public void Test() //a test method to make sure the attribute logic is working correctly.
         {
             Console.WriteLine("hey");
         }

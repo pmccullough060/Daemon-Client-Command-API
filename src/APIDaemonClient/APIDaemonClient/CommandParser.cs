@@ -8,6 +8,8 @@ using System.Text;
 using APIDaemonClient.Attributes;
 using Microsoft.Extensions.Configuration;
 using APIDaemonClient.CommandObject;
+using APIDaemonClient.ExtendedConsole;
+using APIDaemonClient.Views;
 
 namespace APIDaemonClient
 {
@@ -33,15 +35,13 @@ namespace APIDaemonClient
 
             CLIMethods = new Dictionary<CLICommandObject, dynamic>();
 
-            //CONFIGURATION
             CLICommandConfigContainer();
         }
 
-        private void CLICommandConfigContainer()
+        private void CLICommandConfigContainer() //this is where you configure the all the interfaces and DI instances required.
         {
-            //this is where you configure the all the interfaces and DI instances required.
-
             ConfigureForCLI<IUpdateSetting>(_updateSetting);
+            ConfigureForCLI<IDaemonHttpClient>(_daemon);
         }
 
         private void ConfigureForCLI<T>(dynamic instance)
@@ -67,10 +67,29 @@ namespace APIDaemonClient
             cliKVP.Value.GetType().GetMethod(cliKVP.Key.MethodNameDisplay).Invoke(cliKVP.Value, null);
         }
 
-        public void Parse() //call parse and it runs a command.. as we have a dependency injection container it makes us Easy to link up the relevant methods.
+        public void Parse() 
         {
+            ConsoleEx.WriteLineDarkBlue("Next Command:");
+
             var command = Console.ReadLine();
-            CallMethod(command);
+
+            try
+            {
+                CallMethod(command);
+            }
+            catch
+            {
+                Console.WriteLine($"Command: {command} is invalid");
+                Parse();
+            }
+        }
+
+        public void DisplayAllRegisteredCommands()
+        {
+            foreach(var item in CLIMethods)
+            {
+                ConsoleEx.WriteLineDarkBlue($"Command: {item.Key.MethodName}, Some Description about what it does");
+            }
         }
     }
 }

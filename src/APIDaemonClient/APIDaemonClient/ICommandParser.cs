@@ -4,5 +4,6 @@
     {
         void CallMethod(string command);
         void Parse();
+        void DisplayAllRegisteredCommands();
     }
 }

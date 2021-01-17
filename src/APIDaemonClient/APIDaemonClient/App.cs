@@ -8,6 +8,8 @@ using System.Linq;
 using System.Net.Http.Headers;
 using Microsoft.Extensions.DependencyInjection;
 using APIDaemonClient.Attributes;
+using APIDaemonClient.ExtendedConsole;
+using APIDaemonClient.Views;
 
 namespace APIDaemonClient
 {
@@ -17,45 +19,33 @@ namespace APIDaemonClient
         private readonly ILogger<App> _logger;
         private readonly IClientAppBuilderWrapper _clientAppBuilderWrapper;
         private readonly IDaemonHttpClient _daemonHttpClient;
-        private readonly ICommandParser _updateSettingDialogue;
-        private readonly IServiceProvider _serviceProvider;
-        private readonly IUpdateSetting _updateSetting;
         private readonly ICommandParser _commandParser;
+        private readonly IMainView _mainView;
 
         private string AccessToken;
 
-        public App(ICommandParser commandParser, IUpdateSetting updateSetting, IServiceProvider serviceProvider, IConfiguration config, ILogger<App> logger, IClientAppBuilderWrapper clientAppBuilderWrapper, IDaemonHttpClient daemonHttpClient, ICommandParser updateSettingDialogue )
+        public App(ICommandParser commandParser, IMainView mainView, IConfiguration config, ILogger<App> logger, IClientAppBuilderWrapper clientAppBuilderWrapper, IDaemonHttpClient daemonHttpClient)
         {
             _daemonHttpClient = daemonHttpClient;
             _config = config;
             _logger = logger;
             _clientAppBuilderWrapper = clientAppBuilderWrapper;
-            _updateSettingDialogue = updateSettingDialogue;
-
             _commandParser = commandParser;
-
-            //getting an instance of the IServiceProvider
-            _serviceProvider = serviceProvider;
-            _updateSetting = updateSetting;
+            _mainView = mainView;
         }
 
         public void Run()
         {
-            //testing the new command parser logic
+            _mainView.StartMenu();
 
-            _commandParser.CallMethod("Test this Method");
+            GetAuthResult().GetAwaiter().GetResult(); 
 
-            _commandParser.Parse();
+            //MakeHttpRequests().GetAwaiter().GetResult();
 
-            //finished testing the new command parser logic 
-
-            _logger.LogInformation("Calling Azure AAD");
-
-            Console.WriteLine("Making the call...");
-
-            bool sucessfulAuth = GetAuthResult().GetAwaiter().GetResult(); //attempts to successfully authenticate using Azure AAD
-
-            bool successfulHttp = MakeHttpRequests().GetAwaiter().GetResult();
+            while(true)  //loop has to be broken manually;
+            {
+                _commandParser.Parse();
+            }
         }
 
         public async Task<bool> GetAuthResult()
@@ -66,9 +56,7 @@ namespace APIDaemonClient
 
             if(result == null)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("An error occurred, check application log file for more info:" + FileIO.LogFilePath);
-                Console.ResetColor();
+                ConsoleEx.WriteLineRed("An error occurred, check application log file for more info:" + FileIO.LogFilePath);
                 return false;
             }
             else
@@ -76,10 +64,8 @@ namespace APIDaemonClient
                 //storing the AccessToken....
                 AccessToken = result.AccessToken;
 
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("Token acquired \n");
-                Console.WriteLine(result.AccessToken);
-                Console.ResetColor();
+                ConsoleEx.WriteLineDarkGray("Token acquired \n");
+                ConsoleEx.WriteLineGreen(result.AccessToken);
             }
 
             return true;

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using APIDaemonClient.Views;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
@@ -47,7 +48,8 @@ namespace APIDaemonClient
             services.AddTransient<App>();
             services.AddTransient<IClientAppBuilderWrapper,ClientAppBuilderWrapper>();
             services.AddTransient<IDaemonHttpClient, DaemonHttpClient>();
-            services.AddSingleton<ICommandParser, CommandParser>();
+            services.AddTransient<ICommandParser, CommandParser>();
+            services.AddTransient<IMainView, MainView>();
 
             return services;
         }
