@@ -6,11 +6,18 @@ namespace APIDaemonClient.Attributes
 {
     class CLIMethodAttribute : Attribute
     {
-        public string CLIArgument { get; set; }
+        public string CommandName { get; set; }
+        public string CommandArguments { get; set; }
 
-        public CLIMethodAttribute(string cliArgument)
+        public CLIMethodAttribute(string commandName)
         {
-            CLIArgument = cliArgument;
+            CommandName = commandName;
+        }
+
+        public CLIMethodAttribute(string commandName, string commandArguments)
+        {
+            CommandName = commandName;
+            CommandArguments = commandArguments;
         }
     }
 }

@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using APIDaemonClient.CommandObject;
 using APIDaemonClient.ExtendedConsole;
 using APIDaemonClient.Views;
+using System.Linq.Expressions;
 
 namespace APIDaemonClient
 {
@@ -50,10 +51,13 @@ namespace APIDaemonClient
 
             foreach(var item in methodInfoList)
             {
+                var attribute = (CLIMethodAttribute)item.GetCustomAttributes(typeof(CLIMethodAttribute), true).First(); //only consider first custom attribute
+
                 var cliCommandObject = new CLICommandObject()
                 {
                     MethodNameDisplay = item.Name,
-                    MethodName = item.CustomAttributes.First().ConstructorArguments.First().Value.ToString()
+                    MethodName = attribute.CommandName,
+                    MethodParameters = attribute.CommandArguments?.Split(" ")
                 };
 
                 CLIMethods.Add(cliCommandObject, instance);
@@ -62,6 +66,8 @@ namespace APIDaemonClient
 
         public void CallMethod(string command)
         {
+            //add string command parser//
+
             var cliKVP = CLIMethods.Where(x => x.Key.MethodName == command).FirstOrDefault();
 
             cliKVP.Value.GetType().GetMethod(cliKVP.Key.MethodNameDisplay).Invoke(cliKVP.Value, null);

@@ -9,5 +9,6 @@ namespace APIDaemonClient.CommandObject
         public string MethodName { get; set; }
         public string MethodNameDisplay { get; set; }
         public string MethodDescription { get; set; }
+        public object[] MethodParameters { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using APIDaemonClient.Attributes;
+using APIDaemonClient.ExtendedConsole;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
@@ -53,7 +54,9 @@ namespace APIDaemonClient
             catch(Exception e)
             {
                 Console.WriteLine($"Unable to change the parameter: {settingName}");
+
                 _logger.LogInformation($"Unable to change the parameter: {settingName} \n\n\n + {e}");
+
                 return;
             }
 
@@ -77,8 +80,19 @@ namespace APIDaemonClient
 
         public void Test() //a test method to make sure the attribute logic is working correctly.
         {
-            Console.WriteLine("hey");
+            Console.WriteLine("hey Guys");
         }
 
+        public void OutputAllSettings()
+        {
+            int index = 1;
+
+            foreach(KeyValuePair<string, JToken> value in Settings)
+            {
+                ConsoleEx.WriteLineDarkGray("[" + index + "] " + value.Key + " : " + value.Value);
+
+                index++;
+            }
+        }
     }
 }
