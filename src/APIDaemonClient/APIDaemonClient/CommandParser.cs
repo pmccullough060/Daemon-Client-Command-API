@@ -11,6 +11,7 @@ using APIDaemonClient.CommandObject;
 using APIDaemonClient.ExtendedConsole;
 using APIDaemonClient.Views;
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace APIDaemonClient
 {
@@ -36,7 +37,7 @@ namespace APIDaemonClient
 
             CLIMethods = new Dictionary<CLICommandObject, dynamic>();
 
-            CLICommandConfigContainer();
+            CLICommandConfigContainer(); //method being ran more than once.
         }
 
         private void CLICommandConfigContainer() //this is where you configure the all the interfaces and DI instances required.
@@ -47,30 +48,57 @@ namespace APIDaemonClient
 
         private void ConfigureForCLI<T>(dynamic instance)
         {
-            var methodInfoList = typeof(T).GetMethods().Where(x => x.GetCustomAttributes(typeof(CLIMethodAttribute), true).Any()).ToList(); //getting the custom attributes
+            var methodInfoList = typeof(T).GetMethods().Where(x => x.GetCustomAttributes(typeof(CLIMethodAttribute), false).Any()).ToList(); //getting the custom attributes
 
             foreach(var item in methodInfoList)
             {
-                var attribute = (CLIMethodAttribute)item.GetCustomAttributes(typeof(CLIMethodAttribute), true).First(); //only consider first custom attribute
+                var methodParameterTypes = item.GetParameters().Length > 0 ? BuildParameterTypeArray(item.GetParameters()) : null;
+
+                var attribute = (CLIMethodAttribute)item.GetCustomAttributes(typeof(CLIMethodAttribute), false).First(); //only consider first custom attribute
 
                 var cliCommandObject = new CLICommandObject()
                 {
                     MethodNameDisplay = item.Name,
                     MethodName = attribute.CommandName,
-                    MethodParameters = attribute.CommandArguments?.Split(" ")
+                    MethodParameters = attribute.CommandArguments?.Split(" "),
+                    MethodParameterTypes = methodParameterTypes
                 };
 
                 CLIMethods.Add(cliCommandObject, instance);
             }
         }
 
+        private Type[] BuildParameterTypeArray(ParameterInfo[] parameterInfo)
+        {
+            Type[] parameterTypes = new Type[parameterInfo.Length]; //creating an array to hold the parameter types.
+
+            for (int i = 0; i < parameterInfo.Length; i++)
+                parameterTypes[i] = parameterInfo[i].ParameterType;
+
+            return parameterTypes;
+        }
+
         public void CallMethod(string command)
         {
-            //add string command parser//
+            //add string command parser and also a way to infer the type of each object....//
+
+            //cli tool will contain an array of the types to allow us to parse the arguments for the method.
+
+            ArgumentArrayFromString(command);
 
             var cliKVP = CLIMethods.Where(x => x.Key.MethodName == command).FirstOrDefault();
 
+            var hello = "hello";
+            var goodBye = "goodbye";
+
+            object[] methodArguments = { hello, goodBye }; //the arguments passed to the invoke....
+
             cliKVP.Value.GetType().GetMethod(cliKVP.Key.MethodNameDisplay).Invoke(cliKVP.Value, null);
+        }
+
+        private void ArgumentArrayFromString(string command)
+        {
+            var argumentParameters = command.Split("-", StringSplitOptions.RemoveEmptyEntries).ToList(); //first entry is command the next are the parameters
         }
 
         public void Parse() 
@@ -83,7 +111,7 @@ namespace APIDaemonClient
             {
                 CallMethod(command);
             }
-            catch
+            catch(Exception e)
             {
                 Console.WriteLine($"Command: {command} is invalid");
                 Parse();

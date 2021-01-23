@@ -65,11 +65,6 @@ namespace APIDaemonClient
             _logger.LogInformation($"Parameter: {settingName} changed to: {newValue}");
         }
 
-        public void ChangeSettingValue(string settingName, string[] newValue)
-        {
-            throw new NotImplementedException();
-        }
-
         private void UpdateJsonFile()
         {
             using (var streamWriter = new StreamWriter(fileInfo.PhysicalPath, false))
