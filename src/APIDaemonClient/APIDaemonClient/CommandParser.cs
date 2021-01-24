@@ -52,7 +52,7 @@ namespace APIDaemonClient
 
             foreach(var item in methodInfoList)
             {
-                var methodParameterTypes = item.GetParameters().Length > 0 ? BuildParameterTypeArray(item.GetParameters()) : null;
+                var methodParameterTypes = item.GetParameters().Length > 0 ? BuildParameterTypeArray(item.GetParameters()).ToList() : null;
 
                 var attribute = (CLIMethodAttribute)item.GetCustomAttributes(typeof(CLIMethodAttribute), false).First(); //only consider first custom attribute
 
@@ -80,25 +80,39 @@ namespace APIDaemonClient
 
         public void CallMethod(string command)
         {
-            //add string command parser and also a way to infer the type of each object....//
+            //maybe this method should return a tuple or have "out" parameters.... tidy up later..
+            var commandList = StringArrayFromCommand(command); //splitting up method name and arguments.
+            var argumentList = commandList.Skip(1).ToList(); //argument array is the command array without first index
 
-            //cli tool will contain an array of the types to allow us to parse the arguments for the method.
+            var cliKVP = CLIMethods.Where(x => x.Key.MethodName == commandList[0]).FirstOrDefault(); //finding the appropriate CLI Method.
 
-            ArgumentArrayFromString(command);
+            var methodArguments = MethodParameterObjectArray(cliKVP.Key, argumentList);
 
-            var cliKVP = CLIMethods.Where(x => x.Key.MethodName == command).FirstOrDefault();
-
-            var hello = "hello";
-            var goodBye = "goodbye";
-
-            object[] methodArguments = { hello, goodBye }; //the arguments passed to the invoke....
-
-            cliKVP.Value.GetType().GetMethod(cliKVP.Key.MethodNameDisplay).Invoke(cliKVP.Value, null);
+            cliKVP.Value.GetType().GetMethod(cliKVP.Key.MethodNameDisplay).Invoke(cliKVP.Value, methodArguments);
         }
 
-        private void ArgumentArrayFromString(string command)
+        private List<string> StringArrayFromCommand(string command) => command.Split("-", StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()).ToList();
+
+        private object[] MethodParameterObjectArray(CLICommandObject cliCommandObject, List<string> arguments)
         {
-            var argumentParameters = command.Split("-", StringSplitOptions.RemoveEmptyEntries).ToList(); //first entry is command the next are the parameters
+            object[] methodArguments = new object[arguments.Count];
+
+            for(int i = 0; i < arguments.Count; i++)
+            {
+                var currentType = cliCommandObject.MethodParameterTypes[i];
+
+                if(currentType == typeof(string))
+                {
+                    string argumentValue = arguments[i];
+                    methodArguments[i] = argumentValue;
+                }
+                else if(currentType == typeof(int))
+                {
+                    int argumentValue = int.Parse(arguments[i]);
+                    methodArguments[i] = argumentValue;
+                }
+            }
+            return methodArguments;
         }
 
         public void Parse() 
