@@ -4,7 +4,7 @@ using System.Text;
 
 namespace APIDaemonClient.Attributes
 {
-    class CLIMethodAttribute : Attribute
+    public class CLIMethodAttribute : Attribute
     {
         public string CommandName { get; set; }
         public string CommandArguments { get; set; }

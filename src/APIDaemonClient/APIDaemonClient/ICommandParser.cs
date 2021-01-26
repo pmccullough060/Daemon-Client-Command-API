@@ -5,5 +5,6 @@
         void CallMethod(string command);
         void Parse();
         void DisplayAllRegisteredCommands();
+        void ConfigureForCLI<T>(dynamic instance);
     }
 }

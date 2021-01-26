@@ -23,30 +23,16 @@ namespace APIDaemonClient
     /// </summary>
     public class CommandParser : ICommandParser
     {
-        private Dictionary<CLICommandObject, dynamic> CLIMethods;
+        private Dictionary<CLICommandObject, dynamic> CLIMethods = new Dictionary<CLICommandObject, dynamic>();
 
-        private readonly IDaemonHttpClient _daemon;
         private readonly ILogger<CommandParser> _logger;
-        private readonly IUpdateSetting _updateSetting;
 
-        public CommandParser(IDaemonHttpClient daemon, ILogger<CommandParser> logger, IUpdateSetting updateSetting)
+        public CommandParser(ILogger<CommandParser> logger)
         {
-            _daemon = daemon;
             _logger = logger;
-            _updateSetting = updateSetting;
-
-            CLIMethods = new Dictionary<CLICommandObject, dynamic>();
-
-            CLICommandConfigContainer(); //method being ran more than once.
         }
 
-        private void CLICommandConfigContainer() //this is where you configure the all the interfaces and DI instances required.
-        {
-            ConfigureForCLI<IUpdateSetting>(_updateSetting);
-            ConfigureForCLI<IDaemonHttpClient>(_daemon);
-        }
-
-        private void ConfigureForCLI<T>(dynamic instance)
+        public void ConfigureForCLI<T>(dynamic instance)
         {
             var methodInfoList = typeof(T).GetMethods().Where(x => x.GetCustomAttributes(typeof(CLIMethodAttribute), false).Any()).ToList(); //getting the custom attributes
 
@@ -82,6 +68,7 @@ namespace APIDaemonClient
         {
             //maybe this method should return a tuple or have "out" parameters.... tidy up later..
             var commandList = StringArrayFromCommand(command); //splitting up method name and arguments.
+
             var argumentList = commandList.Skip(1).ToList(); //argument array is the command array without first index
 
             var cliKVP = CLIMethods.Where(x => x.Key.MethodName == commandList[0]).FirstOrDefault(); //finding the appropriate CLI Method.
@@ -111,6 +98,15 @@ namespace APIDaemonClient
                     int argumentValue = int.Parse(arguments[i]);
                     methodArguments[i] = argumentValue;
                 }
+                else if(currentType == typeof(double))
+                {
+                    double argumentValue = double.Parse(arguments[i]);
+                    methodArguments[i] = argumentValue;
+                }
+                else
+                {
+                    // throw an error or something.
+                }
             }
             return methodArguments;
         }
@@ -125,7 +121,7 @@ namespace APIDaemonClient
             {
                 CallMethod(command);
             }
-            catch(Exception e)
+            catch
             {
                 Console.WriteLine($"Command: {command} is invalid");
                 Parse();

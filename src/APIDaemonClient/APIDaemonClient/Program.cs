@@ -18,6 +18,15 @@ namespace APIDaemonClient
 
             var serviceProvider = services.BuildServiceProvider();
 
+            //Configuring what gets passed into the commandParser.
+
+            var commandParser = serviceProvider.GetService<ICommandParser>();
+
+            commandParser.ConfigureForCLI<IUpdateSetting>(serviceProvider.GetService<IUpdateSetting>());
+            commandParser.ConfigureForCLI<IDaemonHttpClient>(serviceProvider.GetService<IDaemonHttpClient>());
+
+            //End command parser configuration.
+
             //calls the Run method in App, which replaces main...
             serviceProvider.GetService<App>().Run();
         }
@@ -44,11 +53,11 @@ namespace APIDaemonClient
             services.AddSingleton(config);
             services.AddSingleton<IFileProvider>(physicalProvider);
             services.AddSingleton<IUpdateSetting, UpdateSetting>();
+            services.AddSingleton<ICommandParser, CommandParser>();
 
             services.AddTransient<App>();
             services.AddTransient<IClientAppBuilderWrapper,ClientAppBuilderWrapper>();
             services.AddTransient<IDaemonHttpClient, DaemonHttpClient>();
-            services.AddTransient<ICommandParser, CommandParser>();
             services.AddTransient<IMainView, MainView>();
 
             return services;
