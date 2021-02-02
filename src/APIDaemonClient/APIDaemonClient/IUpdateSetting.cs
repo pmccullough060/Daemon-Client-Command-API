@@ -10,7 +10,7 @@ namespace APIDaemonClient
         [CLIMethod("ChangeSettingValue","-settingName -settingValue")]
         void ChangeSettingValue(string settingName, string value);
 
-        [CLIMethod("Test this Method","-Number")]
+        [CLIMethod("Test","-Number")]
         void Test(int value);
 
         [CLIMethod("Settings")]

@@ -1,16 +1,9 @@
-﻿using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.Text;
 using APIDaemonClient.Attributes;
-using Microsoft.Extensions.Configuration;
 using APIDaemonClient.CommandObject;
 using APIDaemonClient.ExtendedConsole;
-using APIDaemonClient.Views;
-using System.Linq.Expressions;
 using System.Reflection;
 
 namespace APIDaemonClient
@@ -25,13 +18,6 @@ namespace APIDaemonClient
     {
         private Dictionary<CLICommandObject, dynamic> CLIMethods = new Dictionary<CLICommandObject, dynamic>();
 
-        private readonly ILogger<CommandParser> _logger;
-
-        public CommandParser(ILogger<CommandParser> logger)
-        {
-            _logger = logger;
-        }
-
         public void ConfigureForCLI<T>(dynamic instance)
         {
             var methodInfoList = typeof(T).GetMethods().Where(x => x.GetCustomAttributes(typeof(CLIMethodAttribute), false).Any()).ToList(); //getting the custom attributes
@@ -42,13 +28,7 @@ namespace APIDaemonClient
 
                 var attribute = (CLIMethodAttribute)item.GetCustomAttributes(typeof(CLIMethodAttribute), false).First(); //only consider first custom attribute
 
-                var cliCommandObject = new CLICommandObject()
-                {
-                    MethodNameDisplay = item.Name,
-                    MethodName = attribute.CommandName,
-                    MethodParameters = attribute.CommandArguments?.Split(" "),
-                    MethodParameterTypes = methodParameterTypes
-                };
+                var cliCommandObject = new CLICommandObject(item.Name, attribute.CommandName, attribute.CommandArguments?.Split(" "), methodParameterTypes);
 
                 CLIMethods.Add(cliCommandObject, instance);
             }
@@ -66,8 +46,7 @@ namespace APIDaemonClient
 
         public void CallMethod(string command)
         {
-            //maybe this method should return a tuple or have "out" parameters.... tidy up later..
-            var commandList = StringArrayFromCommand(command); //splitting up method name and arguments.
+            var commandList = StringListFromCommand(command); //splitting up method name and arguments.
 
             var argumentList = commandList.Skip(1).ToList(); //argument array is the command array without first index
 
@@ -75,10 +54,10 @@ namespace APIDaemonClient
 
             var methodArguments = MethodParameterObjectArray(cliKVP.Key, argumentList);
 
-            cliKVP.Value.GetType().GetMethod(cliKVP.Key.MethodNameDisplay).Invoke(cliKVP.Value, methodArguments);
+            cliKVP.Value.GetType().GetMethod(cliKVP.Key.MethodName).Invoke(cliKVP.Value, methodArguments);
         }
 
-        private List<string> StringArrayFromCommand(string command) => command.Split("-", StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()).ToList();
+        private List<string> StringListFromCommand(string command) => command.Split("-", StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()).ToList();
 
         private object[] MethodParameterObjectArray(CLICommandObject cliCommandObject, List<string> arguments)
         {
@@ -86,7 +65,7 @@ namespace APIDaemonClient
 
             for(int i = 0; i < arguments.Count; i++)
             {
-                var currentType = cliCommandObject.MethodParameterTypes[i];
+                var currentType = cliCommandObject.MethodParameterTypes[i]; //using the method type to parse the input....
 
                 if(currentType == typeof(string))
                 {
@@ -103,11 +82,22 @@ namespace APIDaemonClient
                     double argumentValue = double.Parse(arguments[i]);
                     methodArguments[i] = argumentValue;
                 }
+                else if(currentType == typeof(long))
+                {
+                    double argumentValue = long.Parse(arguments[i]);
+                    methodArguments[i] = argumentValue;
+                }
+                else if (currentType == typeof(decimal))
+                {
+                    decimal argumentValue = decimal.Parse(arguments[i]);
+                    methodArguments[i] = argumentValue;
+                }
                 else
                 {
-                    // throw an error or something.
+                    throw new ArgumentException("Value parsing exception");
                 }
             }
+
             return methodArguments;
         }
 
