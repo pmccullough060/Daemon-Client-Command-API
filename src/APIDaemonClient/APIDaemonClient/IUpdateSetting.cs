@@ -7,13 +7,13 @@ namespace APIDaemonClient
     {
         JObject Settings { get; }
 
-        [CLIMethod("ChangeSettingValue","-settingName -settingValue")]
+        [CLIMethod("ChangeSettingValue","Change a setting value","-settingName -settingValue")]
         void ChangeSettingValue(string settingName, string value);
 
-        [CLIMethod("Test","-Number")]
+        [CLIMethod("Test","A Test Method","-Number")]
         void Test(int value);
 
-        [CLIMethod("Settings")]
+        [CLIMethod("Settings","Output all settings")]
         void OutputAllSettings();
     }
 }

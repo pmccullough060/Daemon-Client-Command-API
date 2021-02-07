@@ -18,22 +18,32 @@ namespace APIDaemonClient
     {
         private Dictionary<CLICommandObject, dynamic> CLIMethods = new Dictionary<CLICommandObject, dynamic>();
 
+        /// <summary>
+        /// Building the Dictionary<CLICommandObject, dynamic> CLIMethods.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="instance"></param>
         public void ConfigureForCLI<T>(dynamic instance)
         {
             var methodInfoList = typeof(T).GetMethods().Where(x => x.GetCustomAttributes(typeof(CLIMethodAttribute), false).Any()).ToList(); //getting the custom attributes
 
             foreach(var item in methodInfoList)
             {
-                var methodParameterTypes = item.GetParameters().Length > 0 ? BuildParameterTypeArray(item.GetParameters()).ToList() : null;
+                var methodParameterTypes = item.GetParameters().Length > 0 ? BuildParameterTypeArray(item.GetParameters()).ToList() : null; //Returns a List<Type> for all of the method parameters.
 
                 var attribute = (CLIMethodAttribute)item.GetCustomAttributes(typeof(CLIMethodAttribute), false).First(); //only consider first custom attribute
 
-                var cliCommandObject = new CLICommandObject(item.Name, attribute.CommandName, attribute.CommandArguments?.Split(" "), methodParameterTypes);
+                var cliCommandObject = new CLICommandObject(item.Name, attribute.CommandName, attribute.CommandDescription, attribute.CommandArguments?.Split(" "), methodParameterTypes);
 
                 CLIMethods.Add(cliCommandObject, instance);
             }
         }
 
+        /// <summary>
+        /// returns an array of the different parameter types for each method.
+        /// </summary>
+        /// <param name="parameterInfo"></param>
+        /// <returns></returns>
         private Type[] BuildParameterTypeArray(ParameterInfo[] parameterInfo)
         {
             Type[] parameterTypes = new Type[parameterInfo.Length]; //creating an array to hold the parameter types.
@@ -122,7 +132,13 @@ namespace APIDaemonClient
         {
             foreach(var item in CLIMethods)
             {
-                ConsoleEx.WriteLineDarkBlue($"Command: {item.Key.MethodName}, Some Description about what it does");
+                string methodParameters = "";
+
+                if(item.Key.MethodParameters != null)
+                    foreach (var inputParameter in item.Key.MethodParameters)
+                        methodParameters += inputParameter;
+
+                ConsoleEx.WriteLineDarkBlue($"Command: {item.Key.MethodName}, Description: {item.Key.MethodDescription}, Input Parameters: {methodParameters}");
             }
         }
     }
