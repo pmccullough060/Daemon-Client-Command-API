@@ -37,6 +37,9 @@ namespace APIDaemonClient
 
                 CLIMethods.Add(cliCommandObject, instance);
 
+                // only here for testing.
+                getMethod<T>(CLIMethods.Last());
+
                 //could we just store the methods here instead as we know the type?? instead of the CLICommandObject
             }
         }
@@ -72,18 +75,16 @@ namespace APIDaemonClient
 
             //we use the cliKVP to retrieve the correct method....
 
-            getMethod(cliKVP);
-
             cliKVP.Value.GetType().GetMethod(cliKVP.Key.MethodName).Invoke(cliKVP.Value, methodArguments);
         }
 
         //here is where we make sure we are getting the right method
-        private void getMethod(KeyValuePair<CLICommandObject, dynamic> cliKVP)
+        private void getMethod<T>(KeyValuePair<CLICommandObject, dynamic> cliKVP)
         {
-            var method = typeof(UpdateSetting).GetMethods().Single(
+            var method = typeof(T).GetMethods().Single(
                 m =>
                     m.Name == cliKVP.Key.MethodName &&
-                    m.GetParameters().Length == 1 && //this will be the length of the parameters specified.
+                    m.GetParameters().Length == cliKVP.Key.MethodParameters.Length && //this will be the length of the parameters specified.
                     m.GetParameters().Select((s) => s.ParameterType).ToArray().SequenceEqual(cliKVP.Key.MethodParameterTypes.ToArray()) //really hacky atm, just pinning logic down atm
                 );
         }
