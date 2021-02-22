@@ -36,6 +36,8 @@ namespace APIDaemonClient
                 var cliCommandObject = new CLICommandObject(item.Name, attribute.CommandName, attribute.CommandDescription, attribute.CommandArguments?.Split(" "), methodParameterTypes);
 
                 CLIMethods.Add(cliCommandObject, instance);
+
+                //could we just store the methods here instead as we know the type?? instead of the CLICommandObject
             }
         }
 
@@ -54,20 +56,39 @@ namespace APIDaemonClient
             return parameterTypes;
         }
 
+        /// <summary>
+        /// The input to the console from the user.
+        /// </summary>
+        /// <param name="command"></param>
         public void CallMethod(string command)
         {
-            var commandList = StringListFromCommand(command); //splitting up method name and arguments.
+            var commandList = StringListFromCommand(command);
 
-            var argumentList = commandList.Skip(1).ToList(); //argument array is the command array without first index
+            var argumentList = commandList.Skip(1).ToList();
 
-            var cliKVP = CLIMethods.Where(x => x.Key.MethodName == commandList[0]).FirstOrDefault(); //finding the appropriate CLI Method.
+            var cliKVP = CLIMethods.Where(x => x.Key.MethodName == commandList[0]).FirstOrDefault();
 
             var methodArguments = MethodParameterObjectArray(cliKVP.Key, argumentList);
+
+            //we use the cliKVP to retrieve the correct method....
+
+            getMethod(cliKVP);
 
             cliKVP.Value.GetType().GetMethod(cliKVP.Key.MethodName).Invoke(cliKVP.Value, methodArguments);
         }
 
-        private List<string> StringListFromCommand(string command) => command.Split("-", StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()).ToList();
+        //here is where we make sure we are getting the right method
+        private void getMethod(KeyValuePair<CLICommandObject, dynamic> cliKVP)
+        {
+            var method = typeof(UpdateSetting).GetMethods().Single(
+                m =>
+                    m.Name == cliKVP.Key.MethodName &&
+                    m.GetParameters().Length == 1 && //this will be the length of the parameters specified.
+                    m.GetParameters().Select((s) => s.ParameterType).ToArray().SequenceEqual(cliKVP.Key.MethodParameterTypes.ToArray()) //really hacky atm, just pinning logic down atm
+                );
+        }
+
+        private List<string> StringListFromCommand(string command) => command.Split(":", StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()).ToList();
 
         private object[] MethodParameterObjectArray(CLICommandObject cliCommandObject, List<string> arguments)
         {
@@ -121,7 +142,7 @@ namespace APIDaemonClient
             {
                 CallMethod(command);
             }
-            catch
+            catch(Exception e)
             {
                 Console.WriteLine($"Command: {command} is invalid");
                 Parse();

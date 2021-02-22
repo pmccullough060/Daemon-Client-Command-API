@@ -40,7 +40,7 @@ namespace APIDaemonClient
 
             GetAuthResult().GetAwaiter().GetResult(); 
 
-            //MakeHttpRequests().GetAwaiter().GetResult();
+            MakeHttpRequests().GetAwaiter().GetResult();
 
             while(true)  //loop has to be broken manually;
             {
@@ -74,7 +74,7 @@ namespace APIDaemonClient
         public async Task<bool> MakeHttpRequests()
         {
             _daemonHttpClient.ConfigureRequestHeaders(AccessToken);
-            var returnbool = await _daemonHttpClient.HttpGetAsync(_config["BaseAddress"]);
+            var returnbool = await _daemonHttpClient.HttpGetAsync();
             return true;
         }
     }

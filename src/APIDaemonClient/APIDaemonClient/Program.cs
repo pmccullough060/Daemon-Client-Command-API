@@ -37,7 +37,7 @@ namespace APIDaemonClient
                 .WriteTo.File(FileIO.LogFilePath)
                 .CreateLogger();
 
-            //loading configuration filek
+            //loading configuration file
             var config = LoadConfiguration();
 
             //adding serilog
@@ -51,13 +51,13 @@ namespace APIDaemonClient
 
             //singleton as: -> object is the same for everyobject and every request..
             services.AddSingleton(config);
-            services.AddSingleton<IFileProvider>(physicalProvider);
+            services.AddSingleton(physicalProvider);
             services.AddSingleton<IUpdateSetting, UpdateSetting>();
             services.AddSingleton<ICommandParser, CommandParser>();
+            services.AddSingleton<IDaemonHttpClient, DaemonHttpClient>();
 
             services.AddTransient<App>();
             services.AddTransient<IClientAppBuilderWrapper,ClientAppBuilderWrapper>();
-            services.AddTransient<IDaemonHttpClient, DaemonHttpClient>();
             services.AddTransient<IMainView, MainView>();
 
             return services;

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,10 +22,12 @@ namespace APIDaemonClient
         }
 
         private readonly ILogger<DaemonHttpClient> _logger = null;
+        private readonly IConfiguration _config;
 
-        public DaemonHttpClient(ILogger<DaemonHttpClient> logger)
+        public DaemonHttpClient(ILogger<DaemonHttpClient> logger, IConfiguration config)
         {
             _logger = logger;
+            _config = config;
         }
 
         public void ConfigureRequestHeaders(string accessToken) //configuring the HttpClient.
@@ -42,20 +45,28 @@ namespace APIDaemonClient
             defaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", accessToken);
         }
 
-        public async Task<bool> HttpGetAsync(string URL)
+        public async Task<bool> HttpGetAsync()
         {
-            Console.WriteLine($"\nProcessing HttpGet Request for: {URL} \n");
+            Console.WriteLine($"\nProcessing HttpGet Request for: {_config["BaseAddress"]} \n");
 
-            HttpResponseMessage response = await httpClient.GetAsync(URL);
+            HttpResponseMessage response = await httpClient.GetAsync(_config["BaseAddress"]);
 
             if (response.IsSuccessStatusCode)
             {
-                OutputResponseContent(response).Wait();
+                await OutputResponseContent(response);
                 return true;
             }
 
             return false;
         }
+
+        public async Task<bool> HttpGetAsync(int index)
+        {
+            Console.WriteLine("Hey + " + index.ToString());
+
+            return true;
+        }
+
 
         public async Task<bool> HttpPostStringAsync(string URL, string postContent)
         {
@@ -65,7 +76,7 @@ namespace APIDaemonClient
 
             if (response.IsSuccessStatusCode)
             {
-                OutputResponseContent(response).Wait();
+                await OutputResponseContent(response);
                 return true;
             }
 
