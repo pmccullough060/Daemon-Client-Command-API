@@ -40,7 +40,7 @@ namespace APIDaemonClient
 
             GetAuthResult().GetAwaiter().GetResult(); 
 
-            MakeHttpRequests().GetAwaiter().GetResult();
+            //MakeHttpRequests().GetAwaiter().GetResult();
 
             while(true)  //loop has to be broken manually;
             {

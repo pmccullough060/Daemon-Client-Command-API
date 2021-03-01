@@ -27,36 +27,34 @@ namespace APIDaemonClient
         {
             var methodInfoList = typeof(T).GetMethods().Where(x => x.GetCustomAttributes(typeof(CLIMethodAttribute), false).Any()).ToList(); //getting the custom attributes
 
-            foreach(var item in methodInfoList)
+            foreach (var method in methodInfoList)
             {
-                var methodParameterTypes = item.GetParameters().Length > 0 ? BuildParameterTypeArray(item.GetParameters()).ToList() : null; //Returns a List<Type> for all of the method parameters.
+                var attribute = (CLIMethodAttribute)method.GetCustomAttributes(typeof(CLIMethodAttribute), false).First(); //Retrieves the first CLIMethodAttribute decorating the method.
 
-                var attribute = (CLIMethodAttribute)item.GetCustomAttributes(typeof(CLIMethodAttribute), false).First(); //only consider first custom attribute
+                var cliCommandObject = new CLICommandObject(method.Name, 
+                                                            attribute.CommandName, 
+                                                            attribute.CommandDescription, 
+                                                            attribute.CommandArguments, 
+                                                            method.GetParameters(),
+                                                            method); 
 
-                var cliCommandObject = new CLICommandObject(item.Name, attribute.CommandName, attribute.CommandDescription, attribute.CommandArguments?.Split(" "), methodParameterTypes);
+                //could we just add the method info the the cliCommandObject instead? Then when we get the correct CLICommandObject we simply invoke the method from inside this object?
 
                 CLIMethods.Add(cliCommandObject, instance);
 
                 // only here for testing.
                 getMethod<T>(CLIMethods.Last());
-
-                //could we just store the methods here instead as we know the type?? instead of the CLICommandObject
             }
         }
 
-        /// <summary>
-        /// returns an array of the different parameter types for each method.
-        /// </summary>
-        /// <param name="parameterInfo"></param>
-        /// <returns></returns>
-        private Type[] BuildParameterTypeArray(ParameterInfo[] parameterInfo)
+        private void getMethod<T>(KeyValuePair<CLICommandObject, dynamic> cliKVP) //here is where we make sure we are getting the right method when using both static and dynamic polymorphism. ..this may be redundant.
         {
-            Type[] parameterTypes = new Type[parameterInfo.Length]; //creating an array to hold the parameter types.
-
-            for (int i = 0; i < parameterInfo.Length; i++)
-                parameterTypes[i] = parameterInfo[i].ParameterType;
-
-            return parameterTypes;
+            var method = typeof(T).GetMethods().Single(
+                m =>
+                    m.Name == cliKVP.Key.MethodName &&
+                    m.GetParameters().Length == cliKVP.Key.MethodParameters.Length &&
+                    m.GetParameters().Select((s) => s.ParameterType).ToArray().SequenceEqual(cliKVP.Key.MethodParameterTypes)
+                );
         }
 
         /// <summary>
@@ -75,18 +73,9 @@ namespace APIDaemonClient
 
             //we use the cliKVP to retrieve the correct method....
 
-            cliKVP.Value.GetType().GetMethod(cliKVP.Key.MethodName).Invoke(cliKVP.Value, methodArguments);
-        }
+            //gets all the matching names from the CLICommand objects, then attempts to parse each one to the specified type and if it succeeds invokes that method.
 
-        //here is where we make sure we are getting the right method
-        private void getMethod<T>(KeyValuePair<CLICommandObject, dynamic> cliKVP)
-        {
-            var method = typeof(T).GetMethods().Single(
-                m =>
-                    m.Name == cliKVP.Key.MethodName &&
-                    m.GetParameters().Length == cliKVP.Key.MethodParameters.Length && //this will be the length of the parameters specified.
-                    m.GetParameters().Select((s) => s.ParameterType).ToArray().SequenceEqual(cliKVP.Key.MethodParameterTypes.ToArray()) //really hacky atm, just pinning logic down atm
-                );
+            cliKVP.Value.GetType().GetMethod(cliKVP.Key.MethodName).Invoke(cliKVP.Value, methodArguments);
         }
 
         private List<string> StringListFromCommand(string command) => command.Split(":", StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()).ToList();
@@ -152,6 +141,8 @@ namespace APIDaemonClient
 
         public void DisplayAllRegisteredCommands()
         {
+            //move most of this functionality into the CLICommandObject by adding a ToString() method.
+
             foreach(var item in CLIMethods)
             {
                 string methodParameters = "";
