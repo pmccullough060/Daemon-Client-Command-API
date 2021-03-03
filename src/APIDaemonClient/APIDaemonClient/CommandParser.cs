@@ -31,19 +31,9 @@ namespace APIDaemonClient
             {
                 var attribute = (CLIMethodAttribute)method.GetCustomAttributes(typeof(CLIMethodAttribute), false).First(); //Retrieves the first CLIMethodAttribute decorating the method.
 
-                var cliCommandObject = new CLICommandObject(method.Name, 
-                                                            attribute.CommandName, 
-                                                            attribute.CommandDescription, 
-                                                            attribute.CommandArguments, 
-                                                            method.GetParameters(),
-                                                            method); 
-
-                //could we just add the method info the the cliCommandObject instead? Then when we get the correct CLICommandObject we simply invoke the method from inside this object?
+                var cliCommandObject = new CLICommandObject(attribute, method);
 
                 CLIMethods.Add(cliCommandObject, instance);
-
-                // only here for testing.
-                getMethod<T>(CLIMethods.Last());
             }
         }
 
@@ -56,29 +46,6 @@ namespace APIDaemonClient
                     m.GetParameters().Select((s) => s.ParameterType).ToArray().SequenceEqual(cliKVP.Key.MethodParameterTypes)
                 );
         }
-
-        /// <summary>
-        /// The input to the console from the user.
-        /// </summary>
-        /// <param name="command"></param>
-        public void CallMethod(string command)
-        {
-            var commandList = StringListFromCommand(command);
-
-            var argumentList = commandList.Skip(1).ToList();
-
-            var cliKVP = CLIMethods.Where(x => x.Key.MethodName == commandList[0]).FirstOrDefault();
-
-            var methodArguments = MethodParameterObjectArray(cliKVP.Key, argumentList);
-
-            //we use the cliKVP to retrieve the correct method....
-
-            //gets all the matching names from the CLICommand objects, then attempts to parse each one to the specified type and if it succeeds invokes that method.
-
-            cliKVP.Value.GetType().GetMethod(cliKVP.Key.MethodName).Invoke(cliKVP.Value, methodArguments);
-        }
-
-        private List<string> StringListFromCommand(string command) => command.Split(":", StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()).ToList();
 
         private object[] MethodParameterObjectArray(CLICommandObject cliCommandObject, List<string> arguments)
         {
@@ -137,6 +104,66 @@ namespace APIDaemonClient
                 Console.WriteLine($"Command: {command} is invalid");
                 Parse();
             }
+        }
+
+        /// <summary>
+        /// The input to the console from the user.
+        /// </summary>
+        /// <param name="command"></param>
+        public void CallMethod(string command)
+        {
+            var commandList = StringListFromCommand(command);
+
+            var argumentList = commandList.Skip(1).ToList();
+
+            var cliKVP = CLIMethods.Where(x => x.Key.MethodName == commandList[0]).FirstOrDefault();
+
+            //here we have a list of CLICommandObjects.
+
+            var listCliKVP = CLIMethods.Where(x => x.Key.MethodName == commandList[0] & x.Key.MethodParameterTypes.Length == argumentList.Count).ToList();
+
+            //we need to try and parse each of the argument types to the correct type and if possible invoke that method.
+
+            InvokeMethod(argumentList, listCliKVP);
+
+            var methodArguments = MethodParameterObjectArray(cliKVP.Key, argumentList);
+
+            cliKVP.Value.GetType().GetMethod(cliKVP.Key.MethodName).Invoke(cliKVP.Value, methodArguments);
+        }
+
+        public void InvokeMethod(List<string> argumentList, List<KeyValuePair<CLICommandObject,dynamic>> listCliKVP)
+        {
+            foreach(var kvp in listCliKVP)
+            {
+                var typesArray = kvp.Key.MethodParameterTypes;
+
+                var methodArguments = new object[typesArray.Length];
+
+                for (int i = 0; i < typesArray.Length; i++)
+                {
+                    try
+                    {
+                        var methodArgument = Convert.ChangeType(argumentList[i], typesArray[i]);
+
+                        methodArguments[i] = methodArgument;
+                    }
+                    catch
+                    {
+                        break;
+                    }
+                }
+
+                var invokingClass = kvp.Value;
+
+                var methodToInvoke = kvp.Key.MethodInfo;
+
+                methodToInvoke.Invoke(invokingClass, methodArguments);
+            }
+        }
+
+        private List<string> StringListFromCommand(string command)
+        {
+            return command.Split(":", StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()).ToList();
         }
 
         public void DisplayAllRegisteredCommands()
