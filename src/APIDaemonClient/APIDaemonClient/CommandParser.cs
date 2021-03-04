@@ -37,58 +37,6 @@ namespace APIDaemonClient
             }
         }
 
-        private void getMethod<T>(KeyValuePair<CLICommandObject, dynamic> cliKVP) //here is where we make sure we are getting the right method when using both static and dynamic polymorphism. ..this may be redundant.
-        {
-            var method = typeof(T).GetMethods().Single(
-                m =>
-                    m.Name == cliKVP.Key.MethodName &&
-                    m.GetParameters().Length == cliKVP.Key.MethodParameters.Length &&
-                    m.GetParameters().Select((s) => s.ParameterType).ToArray().SequenceEqual(cliKVP.Key.MethodParameterTypes)
-                );
-        }
-
-        private object[] MethodParameterObjectArray(CLICommandObject cliCommandObject, List<string> arguments)
-        {
-            object[] methodArguments = new object[arguments.Count];
-
-            for(int i = 0; i < arguments.Count; i++)
-            {
-                var currentType = cliCommandObject.MethodParameterTypes[i]; //using the method type to parse the input....
-
-                if(currentType == typeof(string))
-                {
-                    string argumentValue = arguments[i];
-                    methodArguments[i] = argumentValue;
-                }
-                else if(currentType == typeof(int))
-                {
-                    int argumentValue = int.Parse(arguments[i]);
-                    methodArguments[i] = argumentValue;
-                }
-                else if(currentType == typeof(double))
-                {
-                    double argumentValue = double.Parse(arguments[i]);
-                    methodArguments[i] = argumentValue;
-                }
-                else if(currentType == typeof(long))
-                {
-                    double argumentValue = long.Parse(arguments[i]);
-                    methodArguments[i] = argumentValue;
-                }
-                else if (currentType == typeof(decimal))
-                {
-                    decimal argumentValue = decimal.Parse(arguments[i]);
-                    methodArguments[i] = argumentValue;
-                }
-                else
-                {
-                    throw new ArgumentException("Value parsing exception");
-                }
-            }
-
-            return methodArguments;
-        }
-
         public void Parse() 
         {
             ConsoleEx.WriteLineDarkBlue("Next Command:");
@@ -116,22 +64,12 @@ namespace APIDaemonClient
 
             var argumentList = commandList.Skip(1).ToList();
 
-            var cliKVP = CLIMethods.Where(x => x.Key.MethodName == commandList[0]).FirstOrDefault();
-
-            //here we have a list of CLICommandObjects.
-
             var listCliKVP = CLIMethods.Where(x => x.Key.MethodName == commandList[0] & x.Key.MethodParameterTypes.Length == argumentList.Count).ToList();
 
-            //we need to try and parse each of the argument types to the correct type and if possible invoke that method.
-
             InvokeMethod(argumentList, listCliKVP);
-
-            var methodArguments = MethodParameterObjectArray(cliKVP.Key, argumentList);
-
-            cliKVP.Value.GetType().GetMethod(cliKVP.Key.MethodName).Invoke(cliKVP.Value, methodArguments);
         }
 
-        public void InvokeMethod(List<string> argumentList, List<KeyValuePair<CLICommandObject,dynamic>> listCliKVP)
+        private void InvokeMethod(List<string> argumentList, List<KeyValuePair<CLICommandObject,dynamic>> listCliKVP)
         {
             foreach(var kvp in listCliKVP)
             {
@@ -158,6 +96,8 @@ namespace APIDaemonClient
                 var methodToInvoke = kvp.Key.MethodInfo;
 
                 methodToInvoke.Invoke(invokingClass, methodArguments);
+
+                return;
             }
         }
 
@@ -168,8 +108,6 @@ namespace APIDaemonClient
 
         public void DisplayAllRegisteredCommands()
         {
-            //move most of this functionality into the CLICommandObject by adding a ToString() method.
-
             foreach(var item in CLIMethods)
             {
                 string methodParameters = "";

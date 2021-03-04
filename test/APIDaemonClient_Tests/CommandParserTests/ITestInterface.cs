@@ -1,19 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using APIDaemonClient.Attributes;
+﻿using APIDaemonClient.Attributes;
 
 namespace APIDaemonClient_Tests.CommandParserTests
 {
     public interface ITestInterface
     {
-        [CLIMethod("TestMethod_1", "A test method with no input parameters")]
-        bool TestMethod_1();
+        [CLIMethod("Test Method", "A test method with no input parameters")]
+        void TestMethod();
 
-        [CLIMethod("TestMethod_2","A test method with a single input parameter", "-InputParameterInt")]
-        bool TestMethod_2(int intInput);
+        [CLIMethod("Test Method", "A test method with a single input parameter", ":InputParameterInt")]
+        void TestMethod(int intInput);
 
-        [CLIMethod("TestMethod_3","A test method with two input parameters" ,"-InputParameterInt -InputParameterString")]
-        bool TestMethod_2(int intInput, string stringInput);
+        [CLIMethod("Test Method", "A test method with a single string parameter", ":InputParameterString")]
+        void TestMethod(string intInput);
+
+        [CLIMethod("Test Method", "A test method with two input parameters" ,":InputParameterInt :InputParameterInt")]
+        void TestMethod(int firstInput, int secondInput);
     }
 }

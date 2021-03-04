@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using Xunit;
 
@@ -11,23 +12,70 @@ namespace APIDaemonClient_Tests.CommandParserTests
 {
     public class CommandParserUnitTests
     {
-        public static ILoggerFactory mockLoggerFactory { get; set; }
-        public static ILogger<CommandParser> mockLogger { get; set; }
+        public CommandParser commandParser { get; set; }
 
         public CommandParserUnitTests()
         {
-            mockLoggerFactory = new NullLoggerFactory();
-            mockLogger = mockLoggerFactory.CreateLogger<CommandParser>();
+            var testObject = new TestObject();
+
+            commandParser = new CommandParser();
+
+            commandParser.ConfigureForCLI<ITestInterface>(testObject);
         }
 
         [Fact]
-        public void SomeTest()
+        public void ParseMethod_MethodHasNoInputParameters_CorrectConsoleOutput()
         {
-            var commandParser = new CommandParser(mockLogger);
+            //Arrange
+            using (StringWriter sw = new StringWriter())
+            {
+                Console.SetOut(sw);
 
-            var mockObject = new Mock<ITestInterface>();
+                //Act
+                commandParser.CallMethod("TestMethod");
 
-            commandParser.ConfigureForCLI<ITestInterface>(mockObject.Object);
+                string expected = string.Format("Test{0}", Environment.NewLine);
+
+                //Assert
+                Assert.Equal(expected, sw.ToString());
+            }
         }
+
+        [Fact]
+        public void ParseMethod_MethodHasSingleIntInput_CorrectConsoleOutput()
+        {
+            //Arrange
+            using (StringWriter sw = new StringWriter())
+            {
+                Console.SetOut(sw);
+
+                //Act
+                commandParser.CallMethod("TestMethod :-1");
+
+                string expected = string.Format("-1{0}", Environment.NewLine);
+
+                //Assert
+                Assert.Equal(expected, sw.ToString());
+            }
+        }
+
+        [Fact]
+        public void ParseMethodStaticPolymorphism_MethodAddsTwoIntInputs_CorrectConsoleOutput()
+        {
+            //Arrange
+            using (StringWriter sw = new StringWriter())
+            {
+                Console.SetOut(sw);
+
+                //Act
+                commandParser.CallMethod("TestMethod :-1 :20");
+
+                string expected = string.Format("19{0}", Environment.NewLine);
+
+                //Assert
+                Assert.Equal(expected, sw.ToString());
+            }
+        }
+
     }
 }

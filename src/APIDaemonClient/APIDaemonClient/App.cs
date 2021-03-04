@@ -42,7 +42,7 @@ namespace APIDaemonClient
 
             //MakeHttpRequests().GetAwaiter().GetResult();
 
-            while(true)  //loop has to be broken manually;
+            while(true)
             {
                 _commandParser.Parse();
             }
@@ -50,9 +50,7 @@ namespace APIDaemonClient
 
         public async Task<bool> GetAuthResult()
         {
-            AuthenticationResult result = null;
-
-            result = await _clientAppBuilderWrapper.GetAuthenticationResult();
+            AuthenticationResult result = await _clientAppBuilderWrapper.GetAuthenticationResult();
 
             if(result == null)
             {
@@ -61,8 +59,7 @@ namespace APIDaemonClient
             }
             else
             {
-                //storing the AccessToken....
-                AccessToken = result.AccessToken;
+                AccessToken = result.AccessToken; //storing the AccessToken....
 
                 ConsoleEx.WriteLineDarkGray("Token acquired \n");
                 ConsoleEx.WriteLineGreen(result.AccessToken);
@@ -74,7 +71,7 @@ namespace APIDaemonClient
         public async Task<bool> MakeHttpRequests()
         {
             _daemonHttpClient.ConfigureRequestHeaders(AccessToken);
-            var returnbool = await _daemonHttpClient.HttpGetAsync();
+            await _daemonHttpClient.HttpGetAsync();
             return true;
         }
     }
