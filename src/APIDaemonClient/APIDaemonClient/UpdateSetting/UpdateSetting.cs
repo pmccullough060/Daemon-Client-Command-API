@@ -1,6 +1,4 @@
-﻿using APIDaemonClient.Attributes;
-using APIDaemonClient.ExtendedConsole;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -33,7 +31,7 @@ namespace APIDaemonClient
             GetSettingsAsJObject();
         }
 
-        private void GetSettingsAsJObject() //getting an instance of the JObject in memory
+        private void GetSettingsAsJObject() 
         {
             var stream = fileInfo.CreateReadStream();
             stream.Position = 0;
@@ -44,7 +42,7 @@ namespace APIDaemonClient
             }
         }
 
-        public void ChangeSettingValue(string settingName, string newValue) //only taking strings as arguments atm probably have an overload of this method to handle an array of strings.
+        public void ChangeSettingValue(string settingName, string newValue) 
         {
             try
             {
@@ -73,20 +71,13 @@ namespace APIDaemonClient
             }
         }
 
-        public void Test(int value) //a test method to make sure the attribute logic is working correctly.
-        {
-            Console.WriteLine("hey Guys: " + value);
-        }
-
         public void OutputAllSettings()
         {
             int index = 1;
 
             foreach(KeyValuePair<string, JToken> value in Settings)
             {
-                ConsoleEx.WriteLineDarkGray("[" + index + "] " + value.Key + " : " + value.Value);
-
-                index++;
+                ConsoleEx.WriteLineDarkGray("[" + index++ + "] " + value.Key + " : " + value.Value);
             }
         }
     }

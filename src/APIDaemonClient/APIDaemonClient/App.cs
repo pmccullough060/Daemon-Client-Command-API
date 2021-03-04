@@ -7,15 +7,12 @@ using System.Threading.Tasks;
 using System.Linq;
 using System.Net.Http.Headers;
 using Microsoft.Extensions.DependencyInjection;
-using APIDaemonClient.Attributes;
-using APIDaemonClient.ExtendedConsole;
 using APIDaemonClient.Views;
 
 namespace APIDaemonClient
 {
     public class App
     {
-        private readonly IConfiguration _config;
         private readonly ILogger<App> _logger;
         private readonly IClientAppBuilderWrapper _clientAppBuilderWrapper;
         private readonly IDaemonHttpClient _daemonHttpClient;
@@ -24,25 +21,24 @@ namespace APIDaemonClient
 
         private string AccessToken;
 
-        public App(ICommandParser commandParser, IMainView mainView, IConfiguration config, ILogger<App> logger, IClientAppBuilderWrapper clientAppBuilderWrapper, IDaemonHttpClient daemonHttpClient)
+        public App(ICommandParser commandParser, IMainView mainView, ILogger<App> logger, IClientAppBuilderWrapper clientAppBuilderWrapper, IDaemonHttpClient daemonHttpClient)
         {
             _daemonHttpClient = daemonHttpClient;
-            _config = config;
             _logger = logger;
             _clientAppBuilderWrapper = clientAppBuilderWrapper;
             _commandParser = commandParser;
             _mainView = mainView;
         }
 
-        public void Run()
+        public async Task Run()
         {
             _mainView.StartMenu();
 
-            GetAuthResult().GetAwaiter().GetResult(); 
+            var authResult = await GetAuthResult(); 
 
             //MakeHttpRequests().GetAwaiter().GetResult();
 
-            while(true)
+            while(authResult)
             {
                 _commandParser.Parse();
             }

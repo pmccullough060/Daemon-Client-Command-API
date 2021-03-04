@@ -1,10 +1,9 @@
-﻿using APIDaemonClient.Attributes;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
-namespace APIDaemonClient.CommandObject
+namespace APIDaemonClient
 {
     public class CLICommandObject
     {
@@ -46,6 +45,16 @@ namespace APIDaemonClient.CommandObject
             {
                 MethodParameterTypes[i] = parameterInfo[i].ParameterType;
             }
+        }
+
+        public override string ToString()
+        {
+            string methodParameters = "";
+
+            for (int i = 0; i < MethodParameters.Length; i++)
+                methodParameters += " " + MethodParameters[i];
+
+            return " =>Command: " + MethodName + " =>Description: " + MethodDescription + " =>Input Parameters:" + methodParameters;
         }
     }
 }

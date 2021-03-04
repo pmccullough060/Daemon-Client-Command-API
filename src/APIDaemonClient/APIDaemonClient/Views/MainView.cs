@@ -1,7 +1,4 @@
-﻿using APIDaemonClient.ExtendedConsole;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
 
 namespace APIDaemonClient.Views
 {
@@ -45,11 +42,5 @@ namespace APIDaemonClient.Views
 
             _commandParser.DisplayAllRegisteredCommands();
         }
-        
-        public void AllCommands()
-        {
-
-        }
-
     }
 }

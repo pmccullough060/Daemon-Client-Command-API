@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace APIDaemonClient.ExtendedConsole
+namespace APIDaemonClient
 {
     public static class ConsoleEx 
     {

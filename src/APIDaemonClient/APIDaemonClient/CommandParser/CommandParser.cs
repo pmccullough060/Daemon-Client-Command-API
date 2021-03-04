@@ -1,28 +1,18 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-using APIDaemonClient.Attributes;
-using APIDaemonClient.CommandObject;
-using APIDaemonClient.ExtendedConsole;
-using System.Reflection;
 
 namespace APIDaemonClient
 {
     /// <summary>
-    /// The command parser is used to run methods based on arguments supplied by the user.
-    /// All placed here to make things cleaner.
-    /// A system is implemented where methods are decorated to allow them to be called from the command line.
-    /// by creating a custom attribute.
+    /// The class receives a string input from the user and can use that to invoke a method with arguments.
+    /// Simply decorate a public methdod with the CLIMethodAttribute to allow is to be called from the CLI.
+    /// Supports static polymorphism.
     /// </summary>
     public class CommandParser : ICommandParser
     {
         private Dictionary<CLICommandObject, dynamic> CLIMethods = new Dictionary<CLICommandObject, dynamic>();
 
-        /// <summary>
-        /// Building the Dictionary<CLICommandObject, dynamic> CLIMethods.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="instance"></param>
         public void ConfigureForCLI<T>(dynamic instance)
         {
             var methodInfoList = typeof(T).GetMethods().Where(x => x.GetCustomAttributes(typeof(CLIMethodAttribute), false).Any()).ToList(); //getting the custom attributes
@@ -47,17 +37,13 @@ namespace APIDaemonClient
             {
                 CallMethod(command);
             }
-            catch(Exception e)
+            catch
             {
                 Console.WriteLine($"Command: {command} is invalid");
                 Parse();
             }
         }
 
-        /// <summary>
-        /// The input to the console from the user.
-        /// </summary>
-        /// <param name="command"></param>
         public void CallMethod(string command)
         {
             var commandList = StringListFromCommand(command);
@@ -69,7 +55,7 @@ namespace APIDaemonClient
             InvokeMethod(argumentList, listCliKVP);
         }
 
-        private void InvokeMethod(List<string> argumentList, List<KeyValuePair<CLICommandObject,dynamic>> listCliKVP)
+        private void InvokeMethod(List<string> argumentList, List<KeyValuePair<CLICommandObject, dynamic>> listCliKVP)
         {
             foreach(var kvp in listCliKVP)
             {
@@ -85,39 +71,21 @@ namespace APIDaemonClient
 
                         methodArguments[i] = methodArgument;
                     }
-                    catch
-                    {
-                        break;
-                    }
+                    catch { break; }
                 }
 
-                var invokingClass = kvp.Value;
-
-                var methodToInvoke = kvp.Key.MethodInfo;
-
-                methodToInvoke.Invoke(invokingClass, methodArguments);
+                kvp.Key.MethodInfo.Invoke(kvp.Value, methodArguments);
 
                 return;
             }
         }
 
-        private List<string> StringListFromCommand(string command)
-        {
-            return command.Split(":", StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()).ToList();
-        }
+        private List<string> StringListFromCommand(string command) => command.Split(":", StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()).ToList();
 
         public void DisplayAllRegisteredCommands()
         {
             foreach(var item in CLIMethods)
-            {
-                string methodParameters = "";
-
-                if(item.Key.MethodParameters != null)
-                    foreach (var inputParameter in item.Key.MethodParameters)
-                        methodParameters += inputParameter;
-
-                ConsoleEx.WriteLineDarkBlue($"Command: {item.Key.MethodName}, Description: {item.Key.MethodDescription}, Input Parameters: {methodParameters}");
-            }
+                ConsoleEx.WriteLineDarkBlue(item.Key.ToString());
         }
     }
 }

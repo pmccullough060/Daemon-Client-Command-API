@@ -1,4 +1,4 @@
-﻿using APIDaemonClient.Attributes;
+﻿using APIDaemonClient;
 
 namespace APIDaemonClient_Tests.CommandParserTests
 {

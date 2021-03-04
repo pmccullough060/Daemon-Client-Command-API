@@ -32,7 +32,7 @@ namespace APIDaemonClient_Tests.CommandParserTests
                 Console.SetOut(sw);
 
                 //Act
-                commandParser.CallMethod("TestMethod");
+                commandParser.CallMethod("TestMethod"); //simulating a typed user command
 
                 string expected = string.Format("Test{0}", Environment.NewLine);
 
@@ -50,7 +50,7 @@ namespace APIDaemonClient_Tests.CommandParserTests
                 Console.SetOut(sw);
 
                 //Act
-                commandParser.CallMethod("TestMethod :-1");
+                commandParser.CallMethod("TestMethod :-1"); //simulating a typed user command
 
                 string expected = string.Format("-1{0}", Environment.NewLine);
 
@@ -68,7 +68,7 @@ namespace APIDaemonClient_Tests.CommandParserTests
                 Console.SetOut(sw);
 
                 //Act
-                commandParser.CallMethod("TestMethod :-1 :20");
+                commandParser.CallMethod("TestMethod :-1 :20"); //simulating a typed user command
 
                 string expected = string.Format("19{0}", Environment.NewLine);
 

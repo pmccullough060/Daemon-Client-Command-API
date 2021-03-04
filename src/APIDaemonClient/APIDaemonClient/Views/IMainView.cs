@@ -2,7 +2,6 @@
 {
     public interface IMainView
     {
-        void AllCommands();
         void StartMenu();
     }
 }

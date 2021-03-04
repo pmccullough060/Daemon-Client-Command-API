@@ -32,8 +32,10 @@ namespace APIDaemonClient
 
         public void ConfigureRequestHeaders(string accessToken) //configuring the HttpClient.
         {
+            #region waffle
             //Socket Exhaustion - For Each HttpClient the connection after the Http request will be held for a period of time after the call.
             //Creating and disposing these HttpClient instances for each request keeps the connections alive which is a waste as no subsequent request will follow.
+            #endregion
 
             httpClient = new HttpClient();
 
@@ -62,6 +64,8 @@ namespace APIDaemonClient
 
         public async Task<bool> HttpGetAsync(int index)
         {
+            //Not Yet implemented fully
+
             Console.WriteLine("Hey + " + index.ToString());
 
             return true;

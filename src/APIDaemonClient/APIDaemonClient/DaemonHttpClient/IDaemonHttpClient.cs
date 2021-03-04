@@ -1,5 +1,4 @@
-﻿using APIDaemonClient.Attributes;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace APIDaemonClient
@@ -12,9 +11,8 @@ namespace APIDaemonClient
         [CLIMethod("HttpGetAsync", "Get all of the command objects")]
         Task<bool> HttpGetAsync();
 
-        [CLIMethod("HttpGetAsync", "Get all of the command objects", ":IndexPosition")]
+        [CLIMethod("HttpGetAsync", "Get an indexed command object", ":IndexPosition")]
         Task<bool> HttpGetAsync(int index);
-
 
         Task<bool> HttpPostStringAsync(string URL, string postContent);
     }

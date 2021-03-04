@@ -6,12 +6,13 @@ using Microsoft.Extensions.Logging;
 using Serilog;
 using System;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace APIDaemonClient
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             IServiceCollection servicesCollection = new ServiceCollection();
             var services = ConfigureServices(servicesCollection);
@@ -28,7 +29,7 @@ namespace APIDaemonClient
             //End command parser configuration.
 
             //calls the Run method in App, which replaces main...
-            serviceProvider.GetService<App>().Run();
+            await serviceProvider.GetService<App>().Run();
         }
 
         private static IServiceCollection ConfigureServices(IServiceCollection services)
