@@ -54,7 +54,7 @@ To invoke the method decorated as:
    void TestMethod(int firstInput, int secondInput);
 
 ```
-To invoke this method with two int input parameters, -2 and 10, the console input would be:
+The console input would be:
 
 ```console
    TestMethod :-2 :10
