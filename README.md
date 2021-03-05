@@ -11,7 +11,7 @@ I thought it would be a cool if the user could enter the name of the method they
 ### How It Works
 
 #### Custom Attributes
-This project uses dependency injection, so we're programming against interfaces instead of concrete instances. If the methods in the interface are public and decorated using the CLICommandAttribute then it can be called from the command line.
+This project uses dependency injection, so we're programming against interfaces instead of concrete instances. If the methods in the interface are decorated using the CLICommandAttribute then they can be called from the command line.
 
 ```csharp
    public interface ITestInterface
