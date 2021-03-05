@@ -45,4 +45,18 @@ In the program.cs once we have configured the service provider we can configure 
   commandParser.ConfigureForCLI<IDaemonHttpClient>(serviceProvider.GetService<IDaemonHttpClient>());
   
 ```
+#### Example
+To invoke the method decorated as:
+
+```csharp
+
+   [CLIMethod("Test Method", "A test method with two input parameters" ,":InputParameterInt :InputParameterInt")]
+   void TestMethod(int firstInput, int secondInput);
+
+```
+To invoke this method with two int input parameters, -2 and 10, the console input would be:
+
+```console
+   TestMethod :-2 :10
+```
 
